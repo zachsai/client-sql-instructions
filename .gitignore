@@ -81,6 +81,9 @@ test_database/
 *.sqlite
 *.sqlite3
 
+# Internal troubleshooting notes
+TROUBLESHOOTING_*.md
+
 # Temporary files
 *.tmp
 *.bak

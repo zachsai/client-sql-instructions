@@ -7,17 +7,23 @@
 
 -- INSTRUCTIONS:
 -- 1. Replace 'your_database_name' with your actual database name
--- 2. Replace passwords with strong, unique passwords
+-- 2. Replace passwords with strong, unique passwords (avoid special chars like !@#$)
 -- 3. Connect to MySQL as an administrator (root or admin user)
 -- 4. Run this script: mysql -u root -p < create_agency_users.sql
+--
+-- PASSWORD GUIDELINES:
+-- ✅ Use: Letters, numbers, underscores (_), hyphens (-), periods (.)
+-- ❌ Avoid: Special characters like ! @ # $ (can cause authentication issues)
+-- Example: YourDatabase_ReadUser_2025
 
 -- =======================================================================
 -- CREATE READ-ONLY USER (zachsai-read)
 -- =======================================================================
 -- This user can only SELECT (read) data
 -- Use this for most automations (reporting, analysis, etc.)
+-- Using mysql_native_password for better remote connection compatibility
 
-CREATE USER 'zachsai-read'@'%' IDENTIFIED BY 'CHANGE_THIS_PASSWORD_123!@#';
+CREATE USER 'zachsai-read'@'%' IDENTIFIED WITH mysql_native_password BY 'CHANGE_THIS_ReadPassword_2025';
 
 -- Grant SELECT access to entire database
 GRANT SELECT ON your_database_name.* TO 'zachsai-read'@'%';
@@ -32,8 +38,9 @@ GRANT SELECT ON your_database_name.* TO 'zachsai-read'@'%';
 -- =======================================================================
 -- This user can SELECT, INSERT, UPDATE, and DELETE data
 -- Only use this when automations need to modify data
+-- Using mysql_native_password for better remote connection compatibility
 
-CREATE USER 'zachsai-read-write'@'%' IDENTIFIED BY 'CHANGE_THIS_PASSWORD_456!@#';
+CREATE USER 'zachsai-read-write'@'%' IDENTIFIED WITH mysql_native_password BY 'CHANGE_THIS_WritePassword_2025';
 
 -- Grant read and write access to entire database
 GRANT SELECT, INSERT, UPDATE, DELETE ON your_database_name.* TO 'zachsai-read-write'@'%';

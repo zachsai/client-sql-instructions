@@ -7,20 +7,25 @@
 
 -- INSTRUCTIONS:
 -- 1. Replace 'your_database_name' with your actual database name
--- 2. Replace passwords with strong, unique passwords
+-- 2. Replace passwords with strong, unique passwords (avoid special chars like !@#$)
 -- 3. Open SQL Server Management Studio (SSMS) or Azure Data Studio
 -- 4. Connect as an administrator (SA or admin user)
 -- 5. Run this script
+--
+-- PASSWORD GUIDELINES:
+-- ✅ Use: Letters, numbers, underscores (_), hyphens (-), periods (.)
+-- ❌ Avoid: Special characters like ! @ # $ (can cause authentication issues)
+-- Example: YourDatabase_ReadUser_2025
 
 -- =======================================================================
 -- CREATE SERVER-LEVEL LOGINS
 -- =======================================================================
 
 -- Read-Only Login
-CREATE LOGIN [zachsai-read] WITH PASSWORD = 'CHANGE_THIS_PASSWORD_123!@#';
+CREATE LOGIN [zachsai-read] WITH PASSWORD = 'CHANGE_THIS_ReadPassword_2025';
 
 -- Read-Write Login
-CREATE LOGIN [zachsai-read-write] WITH PASSWORD = 'CHANGE_THIS_PASSWORD_456!@#';
+CREATE LOGIN [zachsai-read-write] WITH PASSWORD = 'CHANGE_THIS_WritePassword_2025';
 
 GO
 
