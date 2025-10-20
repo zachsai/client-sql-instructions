@@ -403,9 +403,14 @@ Once setup is complete, securely send us:
 
 **Strong passwords**:
 - Minimum 16 characters (20+ recommended)
-- Mix of uppercase, lowercase, numbers, special characters
+- Mix of uppercase, lowercase, numbers
+- Use underscores `_`, hyphens `-`, or periods `.` as separators
+- **Important**: Avoid special characters like `!@#$` in SQL scripts (they can cause authentication issues)
 - No dictionary words, company names, or dates
 - Use a password manager to generate them
+
+**Good example**: `MyDatabase_ReadUser_2025`
+**Bad example**: `MyPassword123!@#` (special chars may fail in SQL scripts)
 
 ### ✅ Principle of Least Privilege
 
@@ -466,6 +471,40 @@ sudo systemctl restart mysql
 SELECT user, host FROM mysql.user WHERE user = 'zachsai-read';
 -- Should show '%' not 'localhost'
 ```
+
+---
+
+### ❌ Authentication Failed with Special Characters in Password
+
+**Symptom**: Getting `ERROR 1045 (28000): Access denied` even though password is correct and user exists.
+
+**Common Cause**: Special characters in passwords (`!`, `@`, `#`, `$`) may not be properly handled in SQL initialization scripts or remote connections.
+
+**Solution**:
+
+1. **Avoid problematic special characters** in passwords set via SQL scripts:
+   - ❌ Avoid: `!` `@` `#` `$` `` ` `` `'` `"` `\`
+   - ✅ Use: Letters, numbers, underscores `_`, hyphens `-`, periods `.`
+
+2. **Use mysql_native_password for remote access**:
+   ```sql
+   ALTER USER 'zachsai-read'@'%' IDENTIFIED WITH mysql_native_password BY 'SafePassword_2025';
+   ALTER USER 'zachsai-read-write'@'%' IDENTIFIED WITH mysql_native_password BY 'SafePassword_2025';
+   FLUSH PRIVILEGES;
+   ```
+
+3. **Test the connection** after password change:
+   ```bash
+   mysql -h your-host -P 3306 -u zachsai-read-write -pSafePassword_2025 -e "SELECT 'Success!' AS status;"
+   ```
+
+4. **If issues persist**, restart with fresh Docker volumes:
+   ```bash
+   docker-compose down -v  # Remove volumes
+   docker-compose up -d    # Start fresh
+   ```
+
+**Best Practice**: Use passwords like `YourService_ReadPass_2025` instead of `YourPassword123!@#`
 
 ---
 

@@ -15,12 +15,14 @@ GRANT ALL PRIVILEGES ON client_database.* TO 'client-admin'@'%';
 
 -- Read-Only User (zachsai-read)
 -- Used for data analysis, reporting, and read-only automations
-CREATE USER 'zachsai-read'@'%' IDENTIFIED BY 'ZachsAI_Read_Pass123!@#';
+-- Note: Using mysql_native_password for better remote connection compatibility
+CREATE USER 'zachsai-read'@'%' IDENTIFIED WITH mysql_native_password BY 'ZachsAI_ReadPass_2025';
 GRANT SELECT ON client_database.* TO 'zachsai-read'@'%';
 
 -- Read-Write User (zachsai-read-write)
 -- Used for automations that need to create, update, or delete data
-CREATE USER 'zachsai-read-write'@'%' IDENTIFIED BY 'ZachsAI_Write_Pass123!@#';
+-- Note: Using mysql_native_password for better remote connection compatibility
+CREATE USER 'zachsai-read-write'@'%' IDENTIFIED WITH mysql_native_password BY 'ZachsAI_WritePass_2025';
 GRANT SELECT, INSERT, UPDATE, DELETE ON client_database.* TO 'zachsai-read-write'@'%';
 
 -- Note: DELETE privilege is included. If you want to prevent deletions:
