@@ -74,12 +74,70 @@ Clients should:
 3. Change default passwords
 4. Execute in SSMS or Azure Data Studio
 
+## Testing Database Access
+
+### Python Connection Test
+Test database connectivity before sending credentials to clients:
+
+```bash
+# Install dependencies
+pip install sqlalchemy pymysql
+
+# Run test script
+python examples/mysql_test.py
+```
+
+Edit `examples/mysql_test.py` to configure connection details (host, port, database, username, password).
+
+### Verifying Users and Permissions
+```bash
+# Inside Docker container
+docker exec -it gumloop_mysql mysql -u root -pRootPassword123\!\@\#
+
+# Or connect remotely
+mysql -h hostname -P port -u zachsai-read-write -pYourPassword -e "SELECT 'Success!' AS status;"
+```
+
+```sql
+-- List agency users
+SELECT user, host FROM mysql.user WHERE user LIKE 'zachsai%';
+
+-- Check permissions
+SHOW GRANTS FOR 'zachsai-read'@'%';
+SHOW GRANTS FOR 'zachsai-read-write'@'%';
+```
+
+### Resetting Docker Database (Troubleshooting)
+If experiencing authentication issues after password changes:
+
+```bash
+# Stop and remove volumes (fresh start)
+docker-compose down -v
+
+# Start fresh (re-runs init.sql)
+docker-compose up -d
+```
+
 ## Security Principles
 
+### Password Guidelines (CRITICAL)
+
+**AVOID special characters in SQL scripts** - they cause authentication issues:
+- ❌ Avoid: `!` `@` `#` `$` `` ` `` `'` `"` `\`
+- ✅ Use: Letters, numbers, underscores `_`, hyphens `-`, periods `.`
+
+**Good password**: `YourDatabase_ReadUser_2025`
+**Bad password**: `YourPassword123!@#` (will fail in SQL scripts)
+
+See TROUBLESHOOTING_PASSWORD_AUTH.md for detailed analysis of special character issues.
+
+### Other Security Principles
+
 - **Least Privilege**: Always start with read-only access, only grant write access when required
-- **Strong Passwords**: Minimum 16 characters, mixed case, numbers, special characters
+- **Strong Passwords**: Minimum 16 characters, mixed case, numbers, safe special characters only
 - **Network Security**: Use SSL/TLS, IP whitelisting, VPN or SSH tunnels for remote access
 - **Table-Level Permissions**: Grant access to specific tables when possible (not entire database)
+- **mysql_native_password**: Use this authentication plugin for better remote connection compatibility
 
 ## Remote Access Methods (in order of security)
 
